@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html>
   <head>
@@ -31,6 +32,7 @@
         <button id="xr-button" disabled>XR not found</button>
       </div>
     </div>
+    <script src="js/three.js"></script>
     <script type="module">
         // WebXR content will go here
         // button to start XR experience
@@ -133,7 +135,7 @@
         }
 
 
-      
+    
     import * as THREE from './three.js/build/three.module.js';
     let renderer = null;
     let scene = null;
@@ -216,8 +218,8 @@
   // render the scene
   renderer.render(scene, camera);
 }
-  checkXR()  
- </script>
+    checkXR()
+    </script>
     
- </body>
+  </body>
 </html>
