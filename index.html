@@ -56,6 +56,17 @@ const camera = new THREE.PerspectiveCamera();
 camera.matrixAutoUpdate = false;
 
 
+// Initialize a WebXR session using "immersive-ar".
+const session = await navigator.xr.requestSession("immersive-ar");
+session.updateRenderState({
+  baseLayer: new XRWebGLLayer(session, gl)
+});
+
+// A 'local' reference space has a native origin that is located
+// near the viewer's position at the time the session was created.
+const referenceSpace = await session.requestReferenceSpace('local');
+
+
 // Create a render loop that allows us to draw on the AR view.
 const onXRFrame = (time, frame) => {
   // Queue up the next draw request.
@@ -86,15 +97,6 @@ const onXRFrame = (time, frame) => {
 session.requestAnimationFrame(onXRFrame);
 }
 
-// Initialize a WebXR session using "immersive-ar".
-const session = await navigator.xr.requestSession("immersive-ar");
-session.updateRenderState({
-  baseLayer: new XRWebGLLayer(session, gl)
-});
-
-// A 'local' reference space has a native origin that is located
-// near the viewer's position at the time the session was created.
-const referenceSpace = await session.requestReferenceSpace('local');
 activateXR()
 </script>
 </body>
