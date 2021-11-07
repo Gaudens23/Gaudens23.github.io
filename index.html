@@ -15,15 +15,14 @@
     We start this one with a simple button. -->
 <button onclick="activateXR()">Start Hello WebXR</button>
 <script>
-async function activateXR() {
+async function activateXR() 
+{
   // Add a canvas element and initialize a WebGL context that is compatible with WebXR.
   const canvas = document.createElement("canvas");
   document.body.appendChild(canvas);
   const gl = canvas.getContext("webgl", {xrCompatible: true});
 
   // To be continued in upcoming steps.
-  
-  
   const scene = new THREE.Scene();
 
 // The cube will have a different color on each side.
@@ -85,7 +84,6 @@ const onXRFrame = (time, frame) => {
   }
 }
 session.requestAnimationFrame(onXRFrame);
-
 }
 
 // Initialize a WebXR session using "immersive-ar".
