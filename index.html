@@ -36,7 +36,8 @@
     </div>
  
     <script type="module">
-        import * as THREE from './three.js/build/three.module.js';  
+        import * as THREE from './three.js/build/three.module.js'; 
+        import \* as THREE from './vendor/three/build/three.module.js'; 
         // WebXR content will go here
         // button to start XR experience
         let xrButton = document.getElementById('xr-button');
@@ -52,7 +53,7 @@
         
 
        
-       let renderer = null;
+        let renderer = null;
         let scene = null;
         let camera = null;
         let reticle = null;
