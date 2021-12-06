@@ -76,12 +76,6 @@ const initScene = (gl, session) =>
 };
 
 
-session.requestReferenceSpace('viewer').then((space) => {
-						this.viewerSpace = space;
-						session.requestHitTestSource({space: this.viewerSpace})
-								.then((hitTestSource) => {
-									this.xrHitTestSource = hitTestSource;
-								});
 
 
 
