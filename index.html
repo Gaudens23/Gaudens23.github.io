@@ -126,7 +126,8 @@ initScene(gl, session);
           });
         }
 
-       function onButtonClicked() {
+       function onButtonClicked() 
+{
   if (!xrSession) {
       navigator.xr.requestSession('immersive-ar', {
           optionalFeatures: ['dom-overlay'],
