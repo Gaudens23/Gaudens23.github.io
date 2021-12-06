@@ -74,6 +74,22 @@ const initScene = (gl, session) => {
 };
 
 
+// here we ask for viewer reference space, since we will be casting a ray
+// from a viewer towards a detected surface. The results of ray and surface intersection
+// will be obtained via xrHitTestSource variable
+session.requestReferenceSpace('viewer').then((refSpace) => {
+  session.requestHitTestSource({ space: refSpace }).then((hitTestSource) => {
+    xrHitTestSource = hitTestSource;
+  });
+});
+initScene(gl, session);
+Hit test source de-initialization that’s done within onSessionEnded():
+if (xrHitTestSource) xrHitTestSource.cancel();
+xrHitTestSource = null;
+You also need to define the variable within the module scope:
+let xrHitTestSource = null;
+
+
 
 
 
@@ -186,23 +202,6 @@ const initScene = (gl, session) => {
   // render the scene
   renderer.render(scene, camera);
 } 
-
-
-// here we ask for viewer reference space, since we will be casting a ray
-// from a viewer towards a detected surface. The results of ray and surface intersection
-// will be obtained via xrHitTestSource variable
-session.requestReferenceSpace('viewer').then((refSpace) => {
-  session.requestHitTestSource({ space: refSpace }).then((hitTestSource) => {
-    xrHitTestSource = hitTestSource;
-  });
-});
-initScene(gl, session);
-Hit test source de-initialization that’s done within onSessionEnded():
-if (xrHitTestSource) xrHitTestSource.cancel();
-xrHitTestSource = null;
-You also need to define the variable within the module scope:
-let xrHitTestSource = null;
-
 
 
 
