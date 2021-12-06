@@ -167,6 +167,9 @@ const initScene = (gl, session) =>
           xrButton.innerHTML = 'Enter AR';
           document.getElementById('info').innerHTML = '';
           gl = null;
+          
+          if (xrHitTestSource) xrHitTestSource.cancel();
+          xrHitTestSource = null;
         }
 
        function onXRFrame(t, frame)
