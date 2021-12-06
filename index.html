@@ -74,21 +74,6 @@ const initScene = (gl, session) => {
 };
 
 
-// here we ask for viewer reference space, since we will be casting a ray
-// from a viewer towards a detected surface. The results of ray and surface intersection
-// will be obtained via xrHitTestSource variable
-session.requestReferenceSpace('viewer').then((refSpace) => {
-  session.requestHitTestSource({ space: refSpace }).then((hitTestSource) => {
-    xrHitTestSource = hitTestSource;
-  });
-});
-initScene(gl, session);
-Hit test source de-initialization that’s done within onSessionEnded():
-if (xrHitTestSource) xrHitTestSource.cancel();
-xrHitTestSource = null;
-
-let xrHitTestSource = null;
-
 
 
 
@@ -180,7 +165,8 @@ let xrHitTestSource = null;
           gl = null;
         }
 
-       function onXRFrame(t, frame) {
+       function onXRFrame(t, frame)
+ {
   let session = frame.session;
   session.requestAnimationFrame(onXRFrame);
   if (xrHitTestSource) {
