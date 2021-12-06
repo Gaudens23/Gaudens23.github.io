@@ -44,7 +44,8 @@ let renderer = null;
 let scene = null;
 let camera = null;
 let reticle = null;
-const initScene = (gl, session) => {
+const initScene = (gl, session) => 
+{
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   var light = new THREE.PointLight(0xffffff, 2, 100); // soft white light
@@ -72,6 +73,13 @@ const initScene = (gl, session) => {
   reticle.visible = false;
   scene.add(reticle);
 };
+session.requestReferenceSpace('viewer').then((refSpace) =>
+ {
+  session.requestHitTestSource({ space: refSpace }).then((hitTestSource) => {
+    xrHitTestSource = hitTestSource;
+  });
+});
+initScene(gl, session);
 
 
 
