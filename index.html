@@ -27,6 +27,14 @@
     <title>Satiata Digit</title>
   </head>
   <body>
+    <div id="overlay">
+      <div class="info-area">
+        <div id="info"></div>
+        <button id="xr-button" disabled>XR not found</button>
+      </div>
+    </div>
+    <script type="module">
+
 
 
 
@@ -71,27 +79,6 @@ const initScene = (gl, session) => {
 
 
 
-    <div id="overlay">
-      <div class="info-area">
-        <div id="info"></div>
-        <button id="xr-button" disabled>XR not found</button>
-      </div>
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <script type="module">
         // WebXR content will go here
         // button to start XR experience
         let xrButton = document.getElementById('xr-button');
