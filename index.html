@@ -44,6 +44,7 @@ let renderer = null;
 let scene = null;
 let camera = null;
 let reticle = null;
+let xrHitTestSource = null;
 const initScene = (gl, session) => 
 {
   scene = new THREE.Scene();
@@ -73,13 +74,6 @@ const initScene = (gl, session) =>
   reticle.visible = false;
   scene.add(reticle);
 };
-session.requestReferenceSpace('viewer').then((refSpace) =>
- {
-  session.requestHitTestSource({ space: refSpace }).then((hitTestSource) => {
-    xrHitTestSource = hitTestSource;
-  });
-});
-initScene(gl, session);
 
 
 
