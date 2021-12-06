@@ -74,6 +74,21 @@ const initScene = (gl, session) => {
 };
 
 
+// here we ask for viewer reference space, since we will be casting a ray
+// from a viewer towards a detected surface. The results of ray and surface intersection
+// will be obtained via xrHitTestSource variable
+session.requestReferenceSpace('viewer').then((refSpace) => {
+  session.requestHitTestSource({ space: refSpace }).then((hitTestSource) => {
+    xrHitTestSource = hitTestSource;
+  });
+});
+initScene(gl, session);
+Hit test source de-initialization that’s done within onSessionEnded():
+if (xrHitTestSource) xrHitTestSource.cancel();
+xrHitTestSource = null;
+You also need to define the variable within the module scope:
+let xrHitTestSource = null;
+
 
 
 
@@ -117,18 +132,17 @@ const initScene = (gl, session) => {
           });
         }
 
-        function onButtonClicked()
-        {
-          if (!xrSession) {
-              navigator.xr.requestSession('immersive-ar', {
-                  optionalFeatures: ['dom-overlay'],
-                  requiredFeatures: ['local'],
-                  domOverlay: {root: document.getElementById('overlay')}
-              }).then(onSessionStarted, onRequestSessionError);
-          } else {
-            xrSession.end();
-          }
-        }
+       function onButtonClicked() {
+  if (!xrSession) {
+      navigator.xr.requestSession('immersive-ar', {
+          optionalFeatures: ['dom-overlay'],
+          requiredFeatures: ['local', 'hit-test'],
+          domOverlay: {root: document.getElementById('overlay')}
+      }).then(onSessionStarted, onRequestSessionError);
+  } else {
+    xrSession.end();
+  }
+} 
 
         function onSessionStarted(session)
         {
@@ -167,17 +181,28 @@ const initScene = (gl, session) => {
           gl = null;
         }
 
-        function onXRFrame(t, frame)
-        {
-          let session = frame.session;
-          session.requestAnimationFrame(onXRFrame);
-          let pose = frame.getViewerPose(xrRefSpace);
-          if (!pose) {
-            return;
-          }
-          const pos = pose.transform.position;
-          info.innerHTML = `x:${pos.x.toFixed(2)} y:${pos.y.toFixed(2)} z:${pos.z.toFixed(2)}`;
-        }
+       function onXRFrame(t, frame) {
+  let session = frame.session;
+  session.requestAnimationFrame(onXRFrame);
+  if (xrHitTestSource) {
+    // obtain hit test results by casting a ray from the center of device screen
+    // into AR view. Results indicate that ray intersected with one or more detected surfaces
+    const hitTestResults = frame.getHitTestResults(xrHitTestSource);
+    if (hitTestResults.length) {
+      // obtain a local pose at the intersection point
+      const pose = hitTestResults[0].getPose(xrRefSpace);
+      // place a reticle at the intersection point
+      reticle.matrix.fromArray( pose.transform.matrix );
+      reticle.visible = true;
+    }
+  } else {  // do not show a reticle if no surfaces are intersected
+    reticle.visible = false;
+  }
+  // bind our gl context that was created with WebXR to threejs renderer
+  gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
+  // render the scene
+  renderer.render(scene, camera);
+} 
 
 
     checkXR()
