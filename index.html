@@ -74,6 +74,16 @@ const initScene = (gl, session) =>
   reticle.visible = false;
   scene.add(reticle);
 };
+
+
+session.requestReferenceSpace('viewer').then((refSpace) => {
+  session.requestHitTestSource({ space: refSpace }).then((hitTestSource) => {
+    xrHitTestSource = hitTestSource;
+  });
+});
+
+
+
 initScene(gl, session);
 
 
