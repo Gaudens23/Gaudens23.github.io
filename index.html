@@ -1,202 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js ar - hit test</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<link type="text/css" rel="stylesheet" href="main.css">
+	</head>
+	<body>
 
+		<div id="info">
+			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> ar - hit test<br/>(Chrome Android 81+)
+		</div>
 
-<!doctype html>
-<html>
-  <head>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=no'>
-    <meta name='mobile-web-app-capable' content='yes'>
-    <meta name='apple-mobile-web-app-capable' content='yes'>
-    <style>
-      div.info-area
-      {
-        z-index: 2;
-        background-color: rgba(255, 255, 255, 0.90);
-        padding: 10px;
-        text-align: center;
-       }
+		<script type="module">
 
-      button
-      {
-        width: 100px;
-        height: 35px;
-        margin: 15px;
-      }
+			import * as THREE from './build/three.module.js';
+			import { ARButton } from './jsm/webxr/ARButton.js';
 
-   </style>
-    <title>Satiata Digit</title>
-  </head>
-  <body>
-    <div id="overlay">
-      <div class="info-area">
-        <div id="info"></div>
-        <button id="xr-button" disabled>XR not found</button>
-      </div>
-    </div>
-    <script scr=" https://cdn.skypack.dev/three "></script>
-    <script type="module">
+			let container;
+			let camera, scene, renderer;
+			let controller;
 
+			let reticle;
 
+			let hitTestSource = null;
+			let hitTestSourceRequested = false;
 
+			init();
+			animate();
 
+			function init() {
 
-let renderer = null;
-let scene = null;
-let camera = null;
-let reticle = null;
-let xrHitTestSource = null;
-const initScene = (gl, session) => 
-{
-  scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  var light = new THREE.PointLight(0xffffff, 2, 100); // soft white light
-  light.position.z = 1;
-  light.position.y = 5;
-  scene.add(light);
-  // create and configure three.js renderer with XR support
-  renderer = new THREE.WebGLRenderer({
-    antialias: true,
-    alpha: true,
-    autoClear: true,
-    context: gl,
-  });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.xr.enabled = true;
-  renderer.xr.setReferenceSpaceType('local');
-  renderer.xr.setSession(session);
-  // simple sprite to indicate detected surfaces
-  reticle = new THREE.Mesh(
-    new THREE.RingBufferGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2),
-    new THREE.MeshPhongMaterial({ color: 0x0fff00 })
-  );
-  reticle.matrixAutoUpdate = false;
-  reticle.visible = false;
-  scene.add(reticle);
-};
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
 
+				scene = new THREE.Scene();
 
+				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );
 
+				const light = new THREE.HemisphereLight( 0xffffff, 0xbbbbff, 1 );
+				light.position.set( 0.5, 1, 0.25 );
+				scene.add( light );
 
-        // WebXR content will go here
-        // button to start XR experience
-        let xrButton = document.getElementById('xr-button');
+				//
 
-        // to control the xr session
-        let xrSession = null;
+				renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.xr.enabled = true;
+				container.appendChild( renderer.domElement );
 
-        // reference space used within an application
-        let xrRefSpace = null;
+				//
 
-        // Canvas OpenGL context used for rendering
-        let gl = null;
+				document.body.appendChild( ARButton.createButton( renderer, { requiredFeatures: [ 'hit-test' ] } ) );
 
-        function checkXR()
-        {
-          if (!window.isSecureContext) {
-            document.getElementById("warning").innerText = "WebXR unavailable. Please use secure context";
-          }
-          if (navigator.xr) { // check to see if WebXR is supported
-            navigator.xr.addEventListener('devicechange', checkSupportedState);
-            checkSupportedState();
-          } else {
-            document.getElementById("warning").innerText = "WebXR unavailable for this browser";
-          }
-        }
-        function checkSupportedState()
-        {
-          navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
-            if (supported) {
-              xrButton.innerHTML = 'Enter AR';
-              xrButton.addEventListener('click', onButtonClicked);
-            } else {
-              xrButton.innerHTML = 'AR not found';
-            }
-            xrButton.disabled = !supported;
-          });
-        }
+				//
 
-       function onButtonClicked() 
-{
-  if (!xrSession) {
-      navigator.xr.requestSession('immersive-ar', {
-          optionalFeatures: ['dom-overlay'],
-          requiredFeatures: ['local', 'hit-test'],
-          domOverlay: {root: document.getElementById('overlay')}
-      }).then(onSessionStarted, onRequestSessionError);
-  } else {
-    xrSession.end();
-  }
-} 
+				const geometry = new THREE.CylinderGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
 
-        function onSessionStarted(session)
-        {
-          xrSession = session;
-          xrButton.innerHTML = 'Exit AR';
+				function onSelect() {
 
-          // Show which type of DOM Overlay got enabled (if any)
-          if (session.domOverlayState) {
-            document.getElementById('info').innerHTML = 'DOM Overlay type: ' + session.domOverlayState.type;
-          }
+					if ( reticle.visible ) {
 
-          session.addEventListener('end', onSessionEnded);
-          // create a canvas element and WebGL context for rendering
-          let canvas = document.createElement('canvas');
-          gl = canvas.getContext('webgl', { xrCompatible: true });
-          session.updateRenderState({ baseLayer: new XRWebGLLayer(session, gl) });
+						const material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
+						const mesh = new THREE.Mesh( geometry, material );
+						mesh.position.setFromMatrixPosition( reticle.matrix );
+						mesh.scale.y = Math.random() * 2 + 1;
+						scene.add( mesh );
 
-          session.requestReferenceSpace('local').then((refSpace) => {
-            xrRefSpace = refSpace;
-            // start WebXR rendering loop
-            session.requestAnimationFrame(onXRFrame);
-          });
+					}
 
-        }
+				}
 
-        function onRequestSessionError(ex)
-        {
-          document.getElementById('info').innerHTML = "Failed to start AR session.";
-        }
+				controller = renderer.xr.getController( 0 );
+				controller.addEventListener( 'select', onSelect );
+				scene.add( controller );
 
-        function onSessionEnded(event)
-        {
-          xrSession = null;
-          xrButton.innerHTML = 'Enter AR';
-          document.getElementById('info').innerHTML = '';
-          gl = null;
-          
-          if (xrHitTestSource) xrHitTestSource.cancel();
-          xrHitTestSource = null;
-        }
+				reticle = new THREE.Mesh(
+					new THREE.RingGeometry( 0.15, 0.2, 32 ).rotateX( - Math.PI / 2 ),
+					new THREE.MeshBasicMaterial()
+				);
+				reticle.matrixAutoUpdate = false;
+				reticle.visible = false;
+				scene.add( reticle );
 
-       function onXRFrame(t, frame)
- {
-  let session = frame.session;
-  session.requestAnimationFrame(onXRFrame);
-  if (xrHitTestSource) {
-    // obtain hit test results by casting a ray from the center of device screen
-    // into AR view. Results indicate that ray intersected with one or more detected surfaces
-    const hitTestResults = frame.getHitTestResults(xrHitTestSource);
-    if (hitTestResults.length) {
-      // obtain a local pose at the intersection point
-      const pose = hitTestResults[0].getPose(xrRefSpace);
-      // place a reticle at the intersection point
-      reticle.matrix.fromArray( pose.transform.matrix );
-      reticle.visible = true;
-    }
-  } else {  // do not show a reticle if no surfaces are intersected
-    reticle.visible = false;
-  }
-  // bind our gl context that was created with WebXR to threejs renderer
-  gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer);
-  // render the scene
-  renderer.render(scene, camera);
-} 
-    
-    
-    initScene(gl, session)
-    checkXR()
+				//
 
-    </script>
-  </body>
+				window.addEventListener( 'resize', onWindowResize );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			//
+
+			function animate() {
+
+				renderer.setAnimationLoop( render );
+
+			}
+
+			function render( timestamp, frame ) {
+
+				if ( frame ) {
+
+					const referenceSpace = renderer.xr.getReferenceSpace();
+					const session = renderer.xr.getSession();
+
+					if ( hitTestSourceRequested === false ) {
+
+						session.requestReferenceSpace( 'viewer' ).then( function ( referenceSpace ) {
+
+							session.requestHitTestSource( { space: referenceSpace } ).then( function ( source ) {
+
+								hitTestSource = source;
+
+							} );
+
+						} );
+
+						session.addEventListener( 'end', function () {
+
+							hitTestSourceRequested = false;
+							hitTestSource = null;
+
+						} );
+
+						hitTestSourceRequested = true;
+
+					}
+
+					if ( hitTestSource ) {
+
+						const hitTestResults = frame.getHitTestResults( hitTestSource );
+
+						if ( hitTestResults.length ) {
+
+							const hit = hitTestResults[ 0 ];
+
+							reticle.visible = true;
+							reticle.matrix.fromArray( hit.getPose( referenceSpace ).transform.matrix );
+
+						} else {
+
+							reticle.visible = false;
+
+						}
+
+					}
+
+				}
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+	</body>
 </html>
