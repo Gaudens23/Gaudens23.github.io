@@ -1,0 +1,19 @@
+body {
+    background-color: aqua;
+    color: #fff;
+    font-family: "Lato", sans-serif;
+  }
+  
+
+  #place-button{
+    position: absolute;
+    bottom: 20px;
+    left: calc(50% - 50px);
+    width: 100px;
+    height: 35px;
+    display: none;
+  }
+
+  #VRButton{
+    margin-bottom: 70px !important;
+  }
