@@ -81,7 +81,7 @@
 						render();
 
 						var loader = new GLTFLoader().setPath('3d/');
-						loader.load(1.glb, function(glb) {
+						loader.load('1.glb', function(glb) {
 
 							current_object = glb.scene;
 							scene.add(current_object);
