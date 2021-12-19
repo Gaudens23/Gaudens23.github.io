@@ -6,15 +6,17 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<link type="text/css" rel="stylesheet" href="main.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                <script src="html2canvas.min.js"></script>
 	</head>
 	<body>
 
 		<div id="content">
 				
-
+                       
 			<div id="container" style="position: fixed;"></div>
-			  
-		
+                    
+                        <button type ="button" name="button"  class="btn" onclick="takescreenshot();">Take screenshot</button>
+			   
 			<button type="button" id="place-button">PLACE</button>
 		</div>
 
@@ -41,6 +43,20 @@
 			init();
 			animate();
 
+                        function takescreenshot()
+                        {
+                         var container=document.body;
+                         html2canvas(container).then(function(canvas)
+                          {
+                          var link=document.createElement("a");
+                          document.body.appendChild(link);
+                          link.download="html_image.png";
+                          link.href=canvas.toDataURL("image/png");
+                          link.target='_blank';
+                          link.click();
+                          }
+                         )
+                        }
 			function go()
                         {
 				if(current_object != null)
