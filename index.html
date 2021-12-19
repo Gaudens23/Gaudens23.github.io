@@ -56,10 +56,7 @@
 				isAR = true;
 			});
 
-			$("#VRButton").click(function(){
-				scene.background = envmap;
-				scene.position.z = -2;
-			});
+			
 
 			$("#place-button").click(function(){
 				arPlace();
@@ -92,7 +89,7 @@
 							current_object = glb.scene;
 							scene.add(current_object);
 
-							arPlace();
+							
 
 							var box = new THREE.Box3();
 							box.setFromObject(current_object);
@@ -140,8 +137,7 @@
 				controls.enableDamping = true;
 				controls.dampingFactor = 0.05;
 
-				//VR SETUP
-				document.body.appendChild(VRButton.createButton(renderer));
+				
 
 				//AR SETUP
 
