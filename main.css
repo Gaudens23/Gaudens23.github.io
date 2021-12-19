@@ -1,5 +1,5 @@
 body {
-    background-color: aqua;
+    background-color: white;
     color: #fff;
     font-family: "Lato", sans-serif;
   }
@@ -43,7 +43,8 @@ body {
     .sidenav a {font-size: 18px;}
   }
 
-  #place-button{
+  #place-button
+{
     position: absolute;
     bottom: 20px;
     left: calc(50% - 50px);
@@ -52,6 +53,6 @@ body {
     display: none;
   }
 
-  #VRButton{
+  #Tape{
     margin-bottom: 70px !important;
   }
