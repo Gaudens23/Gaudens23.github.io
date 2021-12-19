@@ -10,30 +10,15 @@
 	<body>
 
 		<div id="content">
-			<div id="mySidenav" class="sidenav">
-				<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-				<a class="ar-object" id="1" href="#">item_1</a>
-				<a class="ar-object" id="2" href="#">item_2</a>
-				<a class="ar-object" id="3" href="#">item_3</a>
-				<a class="ar-object" id="4" href="#">item_4</a>
-			</div>
+			
 	
 			<div id="container" style="position: fixed;"></div>
 			  
-			<span style="font-size:30px;cursor:pointer;position: absolute;" onclick="openNav()">&#9776; open</span>
 		
 			<button type="button" id="place-button">PLACE</button>
+
 		</div>
 
-		<script>
-			function openNav() {
-			  document.getElementById("mySidenav").style.width = "250px";
-			}
-			
-			function closeNav() {
-			  document.getElementById("mySidenav").style.width = "0";
-			}
-		</script>
 
 		<script type="module">
 
@@ -63,7 +48,7 @@
 					scene.remove(current_object);
 				}
 
-				loadModel($(this).attr("id"));
+				loadModel();
 			});
 
 			$("#ARButton").click(function(){
@@ -71,10 +56,7 @@
 				isAR = true;
 			});
 
-			$("#VRButton").click(function(){
-				scene.background = envmap;
-				scene.position.z = -2;
-			});
+			
 
 			$("#place-button").click(function(){
 				arPlace();
@@ -102,7 +84,7 @@
 						render();
 
 						var loader = new GLTFLoader().setPath('3d/');
-						loader.load(model + ".glb", function(glb) {
+						loader.load('1.glb', function(glb) {
 
 							current_object = glb.scene;
 							scene.add(current_object);
@@ -154,9 +136,6 @@
 				controls.target.set(0, 0, -0.2);
 				controls.enableDamping = true;
 				controls.dampingFactor = 0.05;
-
-				//VR SETUP
-				document.body.appendChild(VRButton.createButton(renderer));
 
 				//AR SETUP
 
