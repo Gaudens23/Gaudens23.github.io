@@ -10,21 +10,22 @@
 	<body>
 
 		<div id="content">
+			
+			<a class="ar-object" href="#">Tape</a>
+				
 	
 			<div id="container" style="position: fixed;"></div>
 			  
-		        <button onclick="actualise()">Actualise</button>
-
-			<button onclick="fixer()">Poser</button>
+		
+			<button type="button" id="place-button">PLACE</button>
 		</div>
-
 
 		<script type="module">
 
 			import * as THREE from '/build/three.module.js';
 			import { ARButton } from './jsm/webxr/ARButton.js';
 			import { VRButton } from './jsm/webxr/VRButton.js';
-			//
+		
 			import { OrbitControls } from './jsm/controls/OrbitControls.js';
 			import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
 			import { RGBELoader } from './jsm/loaders/RGBELoader.js';
@@ -42,12 +43,12 @@
 			init();
 			animate();
 
-			function actualise(){
+			$(".ar-object").click(function(){
 				if(current_object != null){
 					scene.remove(current_object);
 				}
 
-				loadModel($(this).attr("id"));
+				loadModel();
 			});
 
 			$("#ARButton").click(function(){
@@ -55,9 +56,12 @@
 				isAR = true;
 			});
 
-			
+			$("#VRButton").click(function(){
+				scene.background = envmap;
+				scene.position.z = -2;
+			});
 
-			function fixer(){
+			$("#place-button").click(function(){
 				arPlace();
 			});
 
