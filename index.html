@@ -15,7 +15,7 @@
                        
 			<div id="container" style="position: fixed;"></div>
                     
-                        <button type ="button" name="button"  class="btn" onclick="takescreenshot();">Take screenshot</button>
+                       
 			   
 			<button type="button" id="place-button">PLACE</button>
 		</div>
@@ -43,20 +43,6 @@
 			init();
 			animate();
 
-                        function takescreenshot()
-                        {
-                         var container=document.body;
-                         html2canvas(container).then(function(canvas)
-                          {
-                          var link=document.createElement("a");
-                          document.body.appendChild(link);
-                          link.download="html_image.png";
-                          link.href=canvas.toDataURL("image/png");
-                          link.target='_blank';
-                          link.click();
-                          }
-                         )
-                        }
 			function go()
                         {
 				if(current_object != null)
