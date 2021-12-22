@@ -8,9 +8,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                 <script src="html2canvas.min.js"></script>
 
-                <audio controls autoplay>
-                 <source src="/music/try.mp3'" type="audio/mp3">
-                </audio>
+               
 	</head>
 	<body>
 
@@ -25,6 +23,10 @@
 		</div>
 
 		<script type="module">
+
+                        <audio id="musicplayer" autoplay>
+                             <source src="/music/try.mp3">
+                        </audio>
 
 			import * as THREE from '/build/three.module.js';
 			import { ARButton } from './jsm/webxr/ARButton.js';
