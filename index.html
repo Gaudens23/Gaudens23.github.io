@@ -7,6 +7,10 @@
 		<link type="text/css" rel="stylesheet" href="main.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                 <script src="html2canvas.min.js"></script>
+
+                <audio controls autoplay>
+                 <source src="/music/try.mp3'" type="audio/mp3">
+                </audio>
 	</head>
 	<body>
 
@@ -35,7 +39,6 @@
 			var camera, scene, renderer;
 			var controller;
 
-                        var audio = new Audio("/music/try.mp3");
 
 			var reticle, pmremGenerator, current_object, controls, isAR, envmap;
 
@@ -45,7 +48,7 @@
 			init();
 			animate();
                         go();
-                        audio.play();
+                        
 
 			function go()
                         {
