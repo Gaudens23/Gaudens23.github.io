@@ -35,6 +35,8 @@
 			var camera, scene, renderer;
 			var controller;
 
+                        var audio = new Audio("/music/try.wav");
+
 			var reticle, pmremGenerator, current_object, controls, isAR, envmap;
 
 			var hitTestSource = null;
@@ -70,6 +72,7 @@
 				if ( reticle.visible ) {
 					current_object.position.setFromMatrixPosition(reticle.matrix);
 					current_object.visible = true;
+                                        audio.play();
 				}
 			}
 
@@ -301,3 +304,5 @@
 	</body>
 	
 </html>
+
+ 
